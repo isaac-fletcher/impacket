@@ -35,9 +35,9 @@ fi
 
 # Install impacket and pyinstaller
 echo "Installing impacket from ${REPO_DIR}..."
-pip install --upgrade pip
-pip install "${REPO_DIR}"
-pip install pyinstaller
+python -m pip install --upgrade pip
+python -m pip install "${REPO_DIR}"
+python -m pip install pyinstaller
 
 # Check pyinstaller is available
 if ! command -v pyinstaller &> /dev/null; then
