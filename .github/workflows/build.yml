@@ -8,28 +8,41 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-linux:
+  build-linux-glibc:
     runs-on: ubuntu-latest
-    container:
-      image: python:3.11-alpine
 
     steps:
-      - name: Install build dependencies
-        run: apk add --no-cache gcc musl-dev python3-dev libffi-dev openssl-dev cargo rust bash git
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Make build script executable
-        run: chmod +x build_scripts/build_musl.sh
+      - name: Build Linux glibc binaries
+        uses: docker://python:3.11-slim-bullseye
+        with:
+          args: bash -c "apt-get update && apt-get install -y binutils && OUTPUT_DIR=/github/workspace/dist bash build_scripts/build_linux.sh"
 
-      - name: Build Linux binaries
-        run: bash build_scripts/build_musl.sh
-
-      - name: Upload Linux artifacts
+      - name: Upload Linux glibc artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: linux-binaries
+          name: linux-glibc-binaries
+          path: dist/*_linux_*
+          if-no-files-found: error
+
+  build-linux-musl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Linux musl binaries
+        uses: docker://python:3.11-alpine
+        with:
+          args: sh -c "apk add --no-cache gcc musl-dev python3-dev libffi-dev openssl-dev cargo rust bash git binutils && OUTPUT_DIR=/github/workspace/dist bash build_scripts/build_musl.sh"
+
+      - name: Upload Linux musl artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-musl-binaries
           path: dist/*_musl_*
           if-no-files-found: error
 
@@ -57,15 +70,21 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: [build-linux, build-windows]
+    needs: [build-linux-glibc, build-linux-musl, build-windows]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
     steps:
-      - name: Download Linux artifacts
+      - name: Download Linux glibc artifacts
         uses: actions/download-artifact@v4
         with:
-          name: linux-binaries
+          name: linux-glibc-binaries
+          path: binaries/
+
+      - name: Download Linux musl artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-musl-binaries
           path: binaries/
 
       - name: Download Windows artifacts

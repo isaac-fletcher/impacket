@@ -20,7 +20,7 @@ fi
 
 # Detect if running on musl libc (Alpine)
 LIBC_TYPE="glibc"
-if ldd --version 2>&1 | grep -q musl; then
+if [ -f /etc/alpine-release ] || ldd /bin/ls 2>&1 | grep -q musl; then
     LIBC_TYPE="musl"
 fi
 
@@ -40,9 +40,9 @@ source venv/bin/activate
 
 # Install impacket and pyinstaller
 echo "Installing impacket from ${REPO_DIR}..."
-pip install --upgrade pip
-pip install "${REPO_DIR}"
-pip install pyinstaller
+python3 -m pip install --upgrade pip
+python3 -m pip install "${REPO_DIR}"
+python3 -m pip install pyinstaller
 
 # Check pyinstaller is available
 if ! command -v pyinstaller &> /dev/null; then

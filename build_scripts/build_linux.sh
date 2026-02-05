@@ -28,9 +28,9 @@ source venv/bin/activate
 
 # Install impacket and pyinstaller
 echo "Installing impacket from ${REPO_DIR}..."
-pip install --upgrade pip
-pip install "${REPO_DIR}"
-pip install pyinstaller
+python3 -m pip install --upgrade pip
+python3 -m pip install "${REPO_DIR}"
+python3 -m pip install pyinstaller
 
 # Check pyinstaller is available
 if ! command -v pyinstaller &> /dev/null; then
