@@ -10,6 +10,21 @@ Copyright Fortra, LLC and its affiliated companies. All rights reserved.
 
 Impacket was originally created by [SecureAuth](https://www.secureauth.com/labs/open-source-tools/impacket), and now maintained by Fortra's Core Security.
 
+## Static Binaries Fork
+
+This is a fork of [fortra/impacket](https://github.com/fortra/impacket) that produces standalone static binaries of the Impacket example tools. These binaries can be run on target systems without requiring Python to be installed.
+
+**Features:**
+- Pre-compiled binaries for Linux (musl-linked for cross-distro compatibility) and Windows
+- Automated builds via GitHub Actions
+- No Python installation required on target systems
+
+**Downloads:** See the [Releases](https://github.com/isaac-fletcher/impacket/releases) page for pre-built binaries.
+
+This build infrastructure is based on [ropnop/impacket_static_binaries](https://github.com/ropnop/impacket_static_binaries).
+
+---
+
 Impacket is a collection of Python classes for working with network
 protocols. Impacket is focused on providing low-level
 programmatic access to the packets and for some protocols (e.g.
